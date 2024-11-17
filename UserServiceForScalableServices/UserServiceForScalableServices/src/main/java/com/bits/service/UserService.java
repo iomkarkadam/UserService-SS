@@ -6,6 +6,8 @@ import com.bits.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -13,11 +15,18 @@ public class UserService {
     UserRepo userRepo;
 
     public UserDTO getUserDetailsById(String userId){
-        return new UserDTO();
+
+        Optional<User> user= userRepo.findById(Long.valueOf(userId));
+        User user1= user.get();
+        UserDTO userDTO= new UserDTO(user1.getUserName(), user1.getPincode());
+        return userDTO;
     }
 
-    public String registerUser(User user){
-        User userr=  userRepo.save(user);
+    public String registerUser(UserDTO user){
+        User userdetails= new User();
+        userdetails.setPincode(user.getPincode());
+        userdetails.setUserName(user.getUserName());
+        User userr=  userRepo.save(userdetails);
         if(userr!= null){
             return "user registered successfully!";
         }
